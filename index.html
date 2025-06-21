@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Code Match!</title>
+  <style>
+    body {
+      font-family: 'Courier New', monospace;
+      background: #1e1e1e;
+      color: #fff;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      margin-top: 20px;
+    }
+    #game-board {
+      display: grid;
+      grid-template-columns: repeat(4, 100px);
+      grid-gap: 10px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+    .card {
+      background: #333;
+      border: 2px solid #555;
+      width: 100px;
+      height: 100px;
+      font-size: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .flipped {
+      background: #4CAF50;
+    }
+    #footer {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #888;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🧠 Code Match!</h1>
+<button onclick="startGame()">🔄 Reset Game</button>
+<div id="game-board"></div>
+<div id="footer">By KD Tech Bros</div>
+
+<script>
+  const icons = ["💻", "🧠", "⚙️", "💾", "🐞", "👨‍💻", "🔧", "📱"];
+  let cards = [];
+  let firstCard = null;
+  let lockBoard = false;
+
+  function startGame() {
+    const board = document.getElementById("game-board");
+    board.innerHTML = "";
+    cards = shuffle([...icons, ...icons]); // Duplicate & shuffle
+    firstCard = null;
+    lockBoard = false;
+
+    cards.forEach(icon => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.dataset.icon = icon;
+      card.onclick = () => flipCard(card);
+      board.appendChild(card);
+    });
+  }
+
+  function shuffle(array) {
+    return array.sort(() => 0.5 - Math.random());
+  }
+
+  function flipCard(card) {
+    if (lockBoard || card.classList.contains("flipped")) return;
+
+    card.textContent = card.dataset.icon;
+    card.classList.add("flipped");
+
+    if (!firstCard) {
+      firstCard = card;
+      return;
+    }
+
+    if (firstCard.dataset.icon === card.dataset.icon) {
+      firstCard = null; // Keep both flipped
+    } else {
+      lockBoard = true;
+      setTimeout(() => {
+        card.textContent = "";
+        card.classList.remove("flipped");
+        firstCard.textContent = "";
+        firstCard.classList.remove("flipped");
+        firstCard = null;
+        lockBoard = false;
+      }, 1000);
+    }
+  }
+
+  startGame(); // Start on load
+</script>
+
+</body>
+</html>
